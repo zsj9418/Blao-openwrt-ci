@@ -1,7 +1,10 @@
 #!/bin/bash
 
 # 修改默认IP
-# sed -i 's/192.168.1.1/10.0.0.1/g' package/base-files/files/bin/config_generate
+sed -i 's/192.168.1.1/192.168.3.18/g' package/base-files/files/bin/config_generate
+
+# 修改默认名字
+sed -i "s/hostname=''/hostname='JDCAX1800'/g" package/base-files/files/bin/config_generate
 
 # 更改默认 Shell 为 zsh
 # sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
@@ -18,6 +21,8 @@ rm -rf feeds/luci/themes/luci-theme-netgear
 rm -rf feeds/luci/applications/luci-app-mosdns
 rm -rf feeds/luci/applications/luci-app-netdata
 rm -rf feeds/luci/applications/luci-app-serverchan
+
+rm -rf package/lucky
 
 # Git稀疏克隆，只克隆指定目录到本地
 function git_sparse_clone() {
@@ -40,11 +45,22 @@ git_sparse_clone main https://github.com/Lienol/openwrt-package luci-app-filebro
 git_sparse_clone openwrt-18.06 https://github.com/immortalwrt/luci applications/luci-app-eqos
 # git_sparse_clone master https://github.com/syb999/openwrt-19.07.1 package/network/services/msd_lite
 
+git clone --depth 1 https://github.com/QiuSimons/luci-app-daed package/luci-app-daed
+git clone --depth=1 https://github.com/gdy666/luci-app-lucky.git package/lucky
+git clone --depth=1 https://github.com/immortalwrt/wwan-packages package/wwan-packages
+
 # 科学上网插件
 #git clone --depth=1 -b main https://github.com/fw876/helloworld package/luci-app-ssr-plus
 #git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall-packages package/openwrt-passwall
 #git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall package/luci-app-passwall
 #git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall2 package/luci-app-passwall2
+git clone --depth=1 --single-branch --branch dev https://github.com/vernesong/OpenClash package/OpenClash
+git clone --depth=1 --single-branch --branch master https://github.com/bulianglin/homeproxy package/homeproxy
+git clone --depth=1 --single-branch --branch main https://github.com/morytyann/OpenWrt-mihomo package/OpenWrt-mihomo
+git clone --depth=1 --single-branch --branch main https://github.com/Thaolga/luci-app-nekoclash package/luci-app-nekoclash
+git clone --depth=1 --single-branch --branch dev https://github.com/vernesong/OpenClash package/OpenClash
+git clone --depth=1 --single-branch --branch main https://github.com/xiaorouji/openwrt-passwall package/openwrt-passwall
+git clone --depth=1 --single-branch --branch master https://github.com/fw876/helloworld package/helloworld
 #git_sparse_clone master https://github.com/vernesong/OpenClash luci-app-openclash
 
 # Themes
@@ -118,9 +134,9 @@ find package/*/ -maxdepth 2 -path "*/Makefile" | xargs -i sed -i 's/PKG_SOURCE_U
 find package/luci-theme-*/* -type f -name '*luci-theme-*' -print -exec sed -i '/set luci.main.mediaurlbase/d' {} \;
 
 # 调整 V2ray服务器 到 VPN 菜单
-# sed -i 's/services/vpn/g' feeds/luci/applications/luci-app-v2ray-server/luasrc/controller/*.lua
-# sed -i 's/services/vpn/g' feeds/luci/applications/luci-app-v2ray-server/luasrc/model/cbi/v2ray_server/*.lua
-# sed -i 's/services/vpn/g' feeds/luci/applications/luci-app-v2ray-server/luasrc/view/v2ray_server/*.htm
+sed -i 's/services/vpn/g' feeds/luci/applications/luci-app-v2ray-server/luasrc/controller/*.lua
+sed -i 's/services/vpn/g' feeds/luci/applications/luci-app-v2ray-server/luasrc/model/cbi/v2ray_server/*.lua
+sed -i 's/services/vpn/g' feeds/luci/applications/luci-app-v2ray-server/luasrc/view/v2ray_server/*.htm
 
 ./scripts/feeds update -a
 ./scripts/feeds install -a
